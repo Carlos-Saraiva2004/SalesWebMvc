@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SalesWebMvc.Models;
+using SalesWebMvc.Models.ViewModel;
 using SalesWebMvc.Services;
 
 namespace SalesWebMvc.Controllers
@@ -12,21 +13,25 @@ namespace SalesWebMvc.Controllers
     public class SellersController : Controller
     {
         private readonly SellerService _sellerService;
-
-        public SellersController(SellerService sellerService)
+        private readonly DepartmentService _departmentService;
+        public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
+            _departmentService = departmentService;
         }
 
         public IActionResult Index()
         {
-            List<Seller> seller = _sellerService.FindAll();
-            return View(seller);
+            List<Seller> sellers = _sellerService.FindAll();
+            SellerFormViewModel ViewModel = new SellerFormViewModel { Sellers = sellers };
+            return View(ViewModel);
         }
 
         public IActionResult Create()
         {
-            return View();
+            List<Department> list = _departmentService.FindAll();
+            SellerFormViewModel ViewModel = new SellerFormViewModel { Departments = list };
+            return View(ViewModel);
         }
 
         [HttpPost]
